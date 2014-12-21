@@ -2,12 +2,19 @@
   <div class="patient row" ng-repeat="patient in patients">
     <div class="col-sm-2 patient-info">
 
-      <div class="patient-contact">
-        <span class="patient-image" ng-attr-data-initials="{{patient.initials}}"></span>
-        <span class="patient-name" ng-bind="patient.name"></span>
+      <div class="patient-contact" ng-click="viewPatient(patient.person.ehrId)">
+        <span class="patient-image" ng-attr-data-initials="{{patient.person.initials}}"></span>
+        <span class="patient-name" ng-bind="patient.person.name"></span>
       </div> <!-- patient contact info -->
 
       <div class="patient-measurements">
+        <div class="row">
+          <span class="measurements-label">Age: </span>
+          <span class="measurements-data">
+            <span ng-bind="patient.person.age"></span>
+            <span class="unit" ng-show="patient.person.age"> years</span>
+          </span>
+        </div>
         <div class="row">
           <span class="measurements-label">Weight: </span>
           <span class="measurements-data">
@@ -24,18 +31,18 @@
           </span>
         </div>
         <div class="row">
-          <span class="measurements-label">BMI: </span>
+          <span class="measurements-label">Temperature: </span>
             <span class="measurements-data">
-              <span ng-bind="patient.measurements.bmi.value"></span>
-              <span class="unit" ng-bind="patient.measurements.bmi.unit"></span>
+              <span ng-bind="patient.measurements.temperature.value"></span>
+              <span class="unit" ng-bind="patient.measurements.temperature.unit"></span>
             </span>
           </span>
         </div>
         <div class="row">
-          <span class="measurements-label">Heart Rate: </span>
+          <span class="measurements-label">Pulse: </span>
             <span class="measurements-data">
-              <span ng-bind="patient.measurements.heartRate.value"></span>
-              <span class="unit" ng-bind="patient.measurements.heartRate.unit"></span>
+              <span ng-bind="patient.measurements.pulse.value"></span>
+              <span class="unit" ng-bind="patient.measurements.pulse.unit"></span>
             </span>
           </span>
         </div>
@@ -48,20 +55,20 @@
     <div class="col-sm-1 graph-controls">
 
       <div class="btn-group-vertical" data-toggle="buttons">
-        <label class="btn btn-default active" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
-          <input type="radio" name="graphOption" id="option1" autocomplete="off" checked> Weight
+        <label class="btn btn-default active" ng-click="graphOptionChange('weight')">
+          <input type="radio" ng-model="graphOption" value="weight" autocomplete="off" checked> Weight
         </label>
-        <label class="btn btn-default">
-          <input type="radio" name="graphOption" id="option2" autocomplete="off"> Height
+        <label class="btn btn-default" ng-click="graphOptionChange('height')">
+          <input type="radio" ng-model="graphOption" value="height" autocomplete="off"> Height
         </label>
-        <label class="btn btn-default">
-          <input type="radio" name="graphOption" id="option3" autocomplete="off"> BMI
+        <label class="btn btn-default" ng-click="graphOptionChange('bmi')">
+          <input type="radio" ng-model="graphOption" value="bmi" autocomplete="off"> BMI
         </label>
-        <label class="btn btn-default">
-          <input type="radio" name="graphOption" id="option3" autocomplete="off"> Heart
+        <label class="btn btn-default" ng-click="graphOptionChange('heartRate')">
+          <input type="radio" ng-model="graphOption" value="heartRate" autocomplete="off"> Heart Rate
         </label>
-        <label class="btn btn-default">
-          <input type="radio" name="graphOption" id="option3" autocomplete="off"> BP
+        <label class="btn btn-default" ng-click="graphOptionChange('bp')">
+          <input type="radio" ng-model="graphOption" value="bp" autocomplete="off"> Bl. Pressure
         </label>
       </div> <!-- btn-group -->
 

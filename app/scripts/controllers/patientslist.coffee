@@ -1,35 +1,29 @@
 'use strict'
 
-getInitials = (name) ->
-  namesArray = name.trim().split ' '
-  [first, ..., last] = namesArray
-  "#{first[0]}#{if namesArray.length > 1 then last[0] else ""}".toUpperCase()
 
-randomName = ->
-  len = Math.round Math.random() * 15 + 5
-  chars = " abcdefghijklmnopqrstuvwxyz"
-  (chars[Math.round Math.random() * chars.length - 1] for i in [1..len]).join ''
 
-getObj = ->
-  obj =
-    name: randomName()
-    measurements:
-      weight:
-        value: Math.round Math.random() * 50 + 50
-        unit: 'kg'
-      height:
-        value: Math.round Math.random() * 50 + 150
-        unit: 'cm'
-      bmi:
-        value: Math.round Math.random() * 15 + 20
-        unit: 'kg/m2'
-      heartRate:
-        value: Math.round Math.random() * 50 + 50
-        unit: 'bpm'
-  obj.initials = getInitials obj.name
-  obj
+App.controller 'PatientsListController',
+  ($scope, $rootScope, $location, EhrLookup) ->
 
-angular.module('app.controllers', [])
-  .controller 'PatientsListController', ($scope) ->
+    $rootScope.title = 'Patient list'
+
+    ehrIds = [
+      'b931580f-2b05-488b-985b-8d9ffb08ad02'
+      'd564c6a3-5a43-4fcc-bfa7-9ac76e9673bd'
+      '7b661e12-3a98-21ad-c29e-2dc9f5a3d885'
+    ]
+
+    sessionId = EhrLookup.getSessionId()
+
     $scope.patients = []
-    $scope.patients.push getObj() for i in [1..10]
+    for ehrId in ehrIds
+      EhrLookup.getAllData ehrId, sessionId, (data) ->
+        return if not data
+        $scope.patients.push data
+
+
+    $scope.viewPatient = (key) ->
+      $location.path "/patients/#{key}"
+
+    $scope.graphOptionChange = (val) ->
+      console.log "change, #{val}"

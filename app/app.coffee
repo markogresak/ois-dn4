@@ -3,7 +3,7 @@
 # Declare app level module which depends on filters, and services
 App = angular.module 'app', [
   'ngRoute'
-  'app.controllers'
+  # 'app.controllers'
   # 'app.directives'
   # 'app.filters'
   # 'app.services'
@@ -24,15 +24,6 @@ App.config([
         templateUrl: 'views/patientDetail.html'
         controller: 'PatientDetailController'
 
-      # .when '/view1',
-      #   templateUrl: '/partials/partial1.html'
-
-      # .when '/view2',
-      #   templateUrl: '/partials/partial2.html'
-
       .otherwise
         redirectTo: '/patients'
-
-    # Without server side support html5 must be disabled.
-    # $locationProvider.html5Mode false
 ])

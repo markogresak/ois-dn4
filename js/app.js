@@ -1,7 +1,7 @@
 'use strict';
 var App;
 
-App = angular.module('app', ['ngRoute', 'app.controllers']);
+App = angular.module('app', ['ngRoute']);
 
 App.config([
   '$routeProvider', function($routeProvider) {
@@ -172,127 +172,34 @@ svg.append('path')
     .attr('d', line)
 
 ;'use strict';
-
-/* Controllers */
-angular.module('app.controllers', []).controller('AppCtrl', [
-  '$scope', '$location', '$resource', '$rootScope', function($scope, $location, $resource, $rootScope) {
-    $scope.$location = $location;
-    $scope.$watch('$location.path()', function(path) {
-      return $scope.activeNavId = path || '/';
-    });
-    return $scope.getClass = function(id) {
-      if ($scope.activeNavId.substring(0, id.length) === id) {
-        return 'active';
-      } else {
-        return '';
-      }
-    };
-  }
-]).controller('MyCtrl1', [
-  '$scope', function($scope) {
-    return $scope.onePlusOne = 2;
-  }
-]).controller('MyCtrl2', [
-  '$scope', function($scope) {
-    return $scope;
-  }
-]).controller('TodoCtrl', [
-  '$scope', function($scope) {
-    $scope.todos = [
-      {
-        text: "learn angular",
-        done: true
-      }, {
-        text: "build an angular app",
-        done: false
-      }
-    ];
-    $scope.addTodo = function() {
-      $scope.todos.push({
-        text: $scope.todoText,
-        done: false
-      });
-      return $scope.todoText = "";
-    };
-    $scope.remaining = function() {
-      var count;
-      count = 0;
-      angular.forEach($scope.todos, function(todo) {
-        return count += (todo.done ? 0 : 1);
-      });
-      return count;
-    };
-    return $scope.archive = function() {
-      var oldTodos;
-      oldTodos = $scope.todos;
-      $scope.todos = [];
-      return angular.forEach(oldTodos, function(todo) {
-        if (!todo.done) {
-          return $scope.todos.push(todo);
-        }
-      });
-    };
-  }
-]);
+App.controller('PatientDetailController', function($scope, $rootScope, $location, EhrLookup) {
+  $rootScope.title = 'Details for name';
+  return EhrLookup.getAllData(ehrId, sessionId, function(data) {
+    return $scope.patient = data;
+  });
+});
 ;'use strict';
-var getInitials, getObj, randomName;
-
-getInitials = function(name) {
-  var first, last, namesArray;
-  namesArray = name.trim().split(' ');
-  first = namesArray[0], last = namesArray[namesArray.length - 1];
-  return ("" + first[0] + (namesArray.length > 1 ? last[0] : "")).toUpperCase();
-};
-
-randomName = function() {
-  var chars, i, len;
-  len = Math.round(Math.random() * 15 + 5);
-  chars = " abcdefghijklmnopqrstuvwxyz";
-  return ((function() {
-    var _i, _results;
-    _results = [];
-    for (i = _i = 1; 1 <= len ? _i <= len : _i >= len; i = 1 <= len ? ++_i : --_i) {
-      _results.push(chars[Math.round(Math.random() * chars.length - 1)]);
-    }
-    return _results;
-  })()).join('');
-};
-
-getObj = function() {
-  var obj;
-  obj = {
-    name: randomName(),
-    measurements: {
-      weight: {
-        value: Math.round(Math.random() * 50 + 50),
-        unit: 'kg'
-      },
-      height: {
-        value: Math.round(Math.random() * 50 + 150),
-        unit: 'cm'
-      },
-      bmi: {
-        value: Math.round(Math.random() * 15 + 20),
-        unit: 'kg/m2'
-      },
-      heartRate: {
-        value: Math.round(Math.random() * 50 + 50),
-        unit: 'bpm'
-      }
-    }
-  };
-  obj.initials = getInitials(obj.name);
-  return obj;
-};
-
-angular.module('app.controllers', []).controller('PatientsListController', function($scope) {
-  var i, _i, _results;
+App.controller('PatientsListController', function($scope, $rootScope, $location, EhrLookup) {
+  var ehrId, ehrIds, sessionId, _i, _len;
+  $rootScope.title = 'Patient list';
+  ehrIds = ['b931580f-2b05-488b-985b-8d9ffb08ad02', 'd564c6a3-5a43-4fcc-bfa7-9ac76e9673bd', '7b661e12-3a98-21ad-c29e-2dc9f5a3d885'];
+  sessionId = EhrLookup.getSessionId();
   $scope.patients = [];
-  _results = [];
-  for (i = _i = 1; _i <= 10; i = ++_i) {
-    _results.push($scope.patients.push(getObj()));
+  for (_i = 0, _len = ehrIds.length; _i < _len; _i++) {
+    ehrId = ehrIds[_i];
+    EhrLookup.getAllData(ehrId, sessionId, function(data) {
+      if (!data) {
+        return;
+      }
+      return $scope.patients.push(data);
+    });
   }
-  return _results;
+  $scope.viewPatient = function(key) {
+    return $location.path("/patients/" + key);
+  };
+  return $scope.graphOptionChange = function(val) {
+    return console.log("change, " + val);
+  };
 });
 ;var Label, addMeasurements, baseUrl, createEHR, getSessionId, handleError, password, queryUrl, readAsyncSuccess, readEHR, readMeasurements, readResultsAsync, showMessage, username;
 
@@ -572,5 +479,202 @@ readMeasurements = function() {
     }
   });
 };
+;'use strict';
+var calculateAge, escapeAql, getInitials;
+
+escapeAql = function(multilineAql) {
+  return multilineAql.replace(/(\r\n|\n|\r)/gm, " ");
+};
+
+calculateAge = function(dateOfBirth) {
+  return Math.abs(new Date(Date.now() - dateOfBirth.getTime()).getUTCFullYear() - 1970);
+};
+
+getInitials = function(name) {
+  var first, last, namesArray;
+  namesArray = name.trim().split(' ');
+  first = namesArray[0], last = namesArray[namesArray.length - 1];
+  return ("" + first[0] + (namesArray.length > 1 ? last[0] : "")).toUpperCase();
+};
+
+App.factory('EhrLookup', function() {
+  var baseUrl, factoryObj, password, queryUrl, username;
+  baseUrl = "https://rest.ehrscape.com/rest/v1";
+  queryUrl = baseUrl + "/query";
+  username = encodeURIComponent("ois.seminar");
+  password = encodeURIComponent("ois4fri");
+  factoryObj = {};
+  factoryObj.getSessionId = function() {
+    return $.ajax({
+      type: "POST",
+      url: "" + baseUrl + "/session?username=" + username + "&password=" + password,
+      async: false
+    }).responseJSON.sessionId;
+  };
+  factoryObj.aqlQuery = function(aql, sessionId, callback) {
+    return $.ajax({
+      url: "" + baseUrl + "/query?" + ($.param({
+        'aql': aql
+      })),
+      type: 'GET',
+      headers: {
+        "Ehr-Session": sessionId
+      },
+      success: callback
+    });
+  };
+  factoryObj.lastValue = function(select, contains, ehrId, sessionId, callback) {
+    var aql;
+    aql = escapeAql("select\n" + select + "\nfrom EHR e[e/ehr_id/value='" + ehrId + "']\ncontains OBSERVATION " + contains + "\norder by t/data[at0002]/events[at0003]/time/value desc\nlimit 1");
+    return factoryObj.aqlQuery(aql, sessionId, callback);
+  };
+  factoryObj.getLastWeight = function(ehrId, sessionId, callback) {
+    var contains, select;
+    select = "t/data[at0002]/events[at0003]/data[at0001]/items[at0004, 'Body weight']/value/magnitude as value," + "t/data[at0002]/events[at0003]/data[at0001]/items[at0004, 'Body weight']/value/units as unit";
+    contains = "t[openEHR-EHR-OBSERVATION.body_weight.v1]";
+    return factoryObj.lastValue(select, contains, ehrId, sessionId, callback);
+  };
+  factoryObj.getLastHeight = function(ehrId, sessionId, callback) {
+    var contains, select;
+    select = "t/data[at0001]/events[at0002]/data[at0003]/items[at0004, 'Body Height/Length']/value/magnitude as value";
+    contains = "t[openEHR-EHR-OBSERVATION.height.v1]";
+    return factoryObj.lastValue(select, contains, ehrId, sessionId, callback);
+  };
+  factoryObj.getLastTemperature = function(ehrId, sessionId, callback) {
+    var contains, select;
+    select = "t/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value/magnitude as value," + "t/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value/units as unit";
+    contains = "t[openEHR-EHR-OBSERVATION.body_temperature.v1]";
+    return factoryObj.lastValue(select, contains, ehrId, sessionId, callback);
+  };
+  factoryObj.getLastPulse = function(ehrId, sessionId, callback) {
+    var contains, select;
+    select = "t/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value/magnitude as value";
+    contains = "t[openEHR-EHR-OBSERVATION.heart_rate-pulse.v1]";
+    return factoryObj.lastValue(select, contains, ehrId, sessionId, callback);
+  };
+  factoryObj.getPersonalData = function(ehrId, sessionId, callback) {
+    var url;
+    url = "" + baseUrl + "/demographics/ehr/" + ehrId + "/party";
+    return $.ajax({
+      url: "" + baseUrl + "/demographics/ehr/" + ehrId + "/party",
+      type: "GET",
+      headers: {
+        "Ehr-Session": sessionId
+      },
+      success: function(data) {
+        var dateOfBirth, fullName, partyData;
+        partyData = data.party;
+        dateOfBirth = new Date(partyData.dateOfBirth);
+        fullName = "" + partyData.firstNames + " " + partyData.lastNames;
+        return callback({
+          name: fullName,
+          initials: getInitials(fullName),
+          dateOfBirth: dateOfBirth,
+          age: calculateAge(dateOfBirth),
+          gender: partyData.gender,
+          ehrId: ehrId
+        });
+      }
+    });
+  };
+  factoryObj.getAllData = function(ehrId, sessionId, callback) {
+    var data, doCallback, isDataDone, isDone;
+    isDone = function(data) {
+      var k, v;
+      if (data === null) {
+        return false;
+      }
+      for (k in data) {
+        v = data[k];
+        if (v === null) {
+          return false;
+        }
+      }
+      return true;
+    };
+    isDataDone = function(data) {
+      return isDone(data.person) && isDone(data.measurements.weight) && isDone(data.measurements.height) && isDone(data.measurements.bmi) && isDone(data.measurements.pulse);
+    };
+    doCallback = function(data, cb) {
+      if (!isDataDone(data)) {
+        return;
+      }
+      return cb(data);
+    };
+    data = {
+      person: {
+        name: null,
+        initials: null,
+        dateOfBirth: null,
+        age: null,
+        gender: null,
+        ehrId: null
+      },
+      measurements: {
+        weight: {
+          value: null,
+          unit: null
+        },
+        height: {
+          value: null,
+          unit: null
+        },
+        temperature: {
+          value: null,
+          unit: null
+        },
+        pulse: {
+          value: null,
+          unit: null
+        }
+      }
+    };
+    factoryObj.getPersonalData(ehrId, sessionId, function(res) {
+      data.person = res;
+      return doCallback(data, callback);
+    });
+    factoryObj.getLastWeight(ehrId, sessionId, function(res) {
+      var d;
+      if (!res) {
+        return;
+      }
+      d = res.resultSet[0];
+      data.measurements.weight.value = d.value;
+      data.measurements.weight.unit = d.unit || 'kg';
+      return doCallback(data, callback);
+    });
+    factoryObj.getLastHeight(ehrId, sessionId, function(res) {
+      var d;
+      if (!res) {
+        return;
+      }
+      d = res.resultSet[0];
+      data.measurements.height.value = d.value;
+      data.measurements.height.unit = d.unit || 'cm';
+      return doCallback(data, callback);
+    });
+    factoryObj.getLastTemperature(ehrId, sessionId, function(res) {
+      var d;
+      if (!res) {
+        return;
+      }
+      d = res.resultSet[0];
+      data.measurements.temperature.value = d.value;
+      data.measurements.temperature.unit = d.unit || '°C';
+      return doCallback(data, callback);
+    });
+    return factoryObj.getLastPulse(ehrId, sessionId, function(res) {
+      var d;
+      if (!res) {
+        return;
+      }
+      d = res.resultSet[0];
+      data.measurements.pulse.value = d.value;
+      data.measurements.pulse.unit = d.unit || 'bpm';
+      return doCallback(data, callback);
+    });
+  };
+  return factoryObj;
+});
 ;
 //# sourceMappingURL=app.js.map
