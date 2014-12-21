@@ -6,10 +6,10 @@ App = angular.module('app', ['ngRoute', 'app.controllers']);
 App.config([
   '$routeProvider', function($routeProvider) {
     return $routeProvider.when('/patients', {
-      templateUrl: '/views/patientsList.html',
+      templateUrl: 'views/patientsList.html',
       controller: 'PatientsListController'
     }).when('/patients/:ehrid', {
-      templateUrl: '/views/patientDetail.html',
+      templateUrl: 'views/patientDetail.html',
       controller: 'PatientDetailController'
     }).otherwise({
       redirectTo: '/patients'

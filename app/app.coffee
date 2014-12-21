@@ -17,11 +17,11 @@ App.config([
     $routeProvider
 
       .when '/patients',
-        templateUrl: '/views/patientsList.html'
+        templateUrl: 'views/patientsList.html'
         controller: 'PatientsListController'
 
       .when '/patients/:ehrid',
-        templateUrl: '/views/patientDetail.html'
+        templateUrl: 'views/patientDetail.html'
         controller: 'PatientDetailController'
 
       # .when '/view1',
