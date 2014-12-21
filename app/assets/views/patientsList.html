@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="patient row" ng-repeat="patient in patients">
+    <div class="col-sm-2 patient-info">
+
+      <div class="patient-contact">
+        <span class="patient-image" ng-attr-data-initials="{{patient.initials}}"></span>
+        <span class="patient-name" ng-bind="patient.name"></span>
+      </div> <!-- patient contact info -->
+
+      <div class="patient-measurements">
+        <div class="row">
+          <span class="measurements-label">Weight: </span>
+          <span class="measurements-data">
+            <span ng-bind="patient.measurements.weight.value"></span>
+            <span class="unit" ng-bind="patient.measurements.weight.unit"></span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="measurements-label">Height: </span>
+            <span class="measurements-data">
+              <span ng-bind="patient.measurements.height.value"></span>
+              <span class="unit" ng-bind="patient.measurements.height.unit"></span>
+            </span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="measurements-label">BMI: </span>
+            <span class="measurements-data">
+              <span ng-bind="patient.measurements.bmi.value"></span>
+              <span class="unit" ng-bind="patient.measurements.bmi.unit"></span>
+            </span>
+          </span>
+        </div>
+        <div class="row">
+          <span class="measurements-label">Heart Rate: </span>
+            <span class="measurements-data">
+              <span ng-bind="patient.measurements.heartRate.value"></span>
+              <span class="unit" ng-bind="patient.measurements.heartRate.unit"></span>
+            </span>
+          </span>
+        </div>
+      </div> <!-- patient measurements -->
+
+    </div> <!-- patient-info -->
+
+    <div class="col-sm-9 measurements-graph"></div>
+
+    <div class="col-sm-1 graph-controls">
+
+      <div class="btn-group-vertical" data-toggle="buttons">
+        <label class="btn btn-default active" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+          <input type="radio" name="graphOption" id="option1" autocomplete="off" checked> Weight
+        </label>
+        <label class="btn btn-default">
+          <input type="radio" name="graphOption" id="option2" autocomplete="off"> Height
+        </label>
+        <label class="btn btn-default">
+          <input type="radio" name="graphOption" id="option3" autocomplete="off"> BMI
+        </label>
+        <label class="btn btn-default">
+          <input type="radio" name="graphOption" id="option3" autocomplete="off"> Heart
+        </label>
+        <label class="btn btn-default">
+          <input type="radio" name="graphOption" id="option3" autocomplete="off"> BP
+        </label>
+      </div> <!-- btn-group -->
+
+    </div> <!-- graph controls -->
+
+  </div> <!-- patient -->
+</div> <!-- patients container -->

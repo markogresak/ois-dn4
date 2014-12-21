@@ -1,17 +1,146 @@
-/*
-Place custom styles here. These styles should loaded after
-bootstrap, so they may override it's behavior.
-*/
+@patient-details-size: 200px;
+@patient-details-padding: 10px;
+@patient-contact-size: 50px;
+@graph-controls-count: 4.9;
+@footer-height: 60px;
 
-// Footer
+html {
+  min-height: 100%;
+  position: relative;
+}
+
+body {
+  margin-bottom: @footer-height;
+}
+
+.header {
+  padding-top: 0;
+  margin-top: 0;
+
+  h1 {
+    margin: 0;
+    padding: 10px 0;
+  }
+}
+
 .footer {
-  background-color: whitesmoke;
-  padding: 30px 0;
-  /* .box-shadow(inset 0 5px 15px rgba(0, 0, 0, .025)); */
+  height: @footer-height;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  padding-top: 20px;
 }
 
-// Application styles
-.donetrue {
-  text-decoration: line-through;
-  color: grey;
+.patient {
+  width: 100%;
+  height: @patient-details-size;
+  background: whitesmoke;
+  margin-top: 20px;
+
+  box-shadow: 0 1px 2px 0 #333;
+
+  transition: transform, 0.3s;
+  transition: box-shadow, 0.3s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 3px 6px 0 #333;
+  }
+
+  .patient-info {
+    height: (@patient-details-size - (@patient-details-padding * 2));
+    // width: @patient-details-size;
+    padding: 10px;
+
+    .patient-contact {
+      width: (@patient-details-size - (@patient-details-padding * 2));
+      height: @patient-contact-size;
+      overflow: hidden;
+    }
+
+    .patient-name {
+      width: (@patient-details-size - (@patient-details-padding * 3) - @patient-contact-size);
+      font-size: 1.1em;
+      font-weight: 500;
+      padding-left: @patient-details-padding;
+      line-height: @patient-contact-size;
+      vertical-align: text-bottom;
+      display: inline-block;
+      white-space: nowrap;
+      overflow:hidden !important;
+      text-overflow: ellipsis;
+    }
+
+    .patient-image {
+      display: inline-block;
+      width: @patient-contact-size;
+      height: @patient-contact-size;
+      background: #b7b7b7;
+      color: white;
+      border-radius: 100%;
+      text-align: center;
+
+      &:before {
+        line-height: @patient-contact-size;
+        vertical-align: text-bottom;
+        content: attr(data-initials);
+      }
+    }
+
+    .patient-measurements {
+      width: (@patient-details-size - (@patient-details-padding * 2));
+      height: (@patient-details-size - (@patient-details-padding * 4) - @patient-contact-size);
+      padding-top: @patient-details-padding;
+
+      .row {
+        margin-left: 0;
+        font-size: 1.2em;
+        line-height: 1.5em;
+      }
+
+      .measurements-label {
+        font-weight: 400;
+        width: 45%;
+        display: inline-block;
+        text-align: right;
+      }
+
+      .measurements-data {
+        font-weight: 200;
+
+        .unit {
+          font-size: 0.8em;
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  .measurements-graph {
+    height: 100%;
+    background: #efefef;
+  }
+
+  .graph-controls {
+    height: 100%;
+    padding: 0;
+    background: red;
+
+    .btn-group-vertical {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+    }
+
+    .btn {
+      width: 100%;
+      height: (@patient-details-size / @graph-controls-count);
+      border-radius: 0 !important;
+      box-shadow: none;
+    }
+  }
+
 }
+
+
